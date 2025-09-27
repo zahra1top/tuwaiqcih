@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>بوابة الموظف - تسجيل الدخول وعرض البيانات</title>
+  <style>
+    :root{
+      --blue:#0E6BA8;
+      --blue-600:#0a5687;
+      --white:#ffffff;
+      --bg:#f6f9fc;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --success:#0ea5e9;
+      --danger:#ef4444;
+      --ok:#10b981;
+      --warning:#f59e0b;
+      --radius:16px;
+      --shadow: 0 10px 30px rgba(14,107,168,.15);
+    }
+    *{box-sizing:border-box}
+    body{
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Kufi Arabic", Tahoma, Arial, sans-serif;
+      background: radial-gradient(1200px 800px at 80% -200px, rgba(14,107,168,.08), transparent),
+                  radial-gradient(900px 500px at -200px 100%, rgba(14,107,168,.05), transparent),
+                  var(--bg);
+      color:var(--text);
+      margin:0; padding:0;
+      min-height: 100dvh;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .container{width:min(1100px, 94vw); margin:32px auto;}
+    .header{
+      display:flex; gap:14px; align-items:center; justify-content:center; margin-bottom:24px;
+    }
+    .logo{
+      width:46px; height:46px; border-radius:12px;
+      background: linear-gradient(145deg, var(--blue), #3fb3ff);
+      display:grid; place-items:center; color:white; box-shadow: var(--shadow);
+    }
+    .logo svg{width:26px; height:26px; opacity:.95}
+    h1{
+      margin:0; font-size:clamp(20px, 2.6vw, 30px); color:var(--blue);
+      letter-spacing:.2px
+    }
+    .card{
+      background:var(--card); border-radius:var(--radius);
+      box-shadow: var(--shadow); padding:clamp(18px, 3.4vw, 28px);
+    }
+    .grid{display:grid; gap:14px}
+    .two{grid-template-columns: 1fr 1fr}
+    @media (max-width:800px){ .two{grid-template-columns: 1fr} }
+    label{display:block; font-size:14px; color:var(--muted); margin-bottom:6px}
+    input[type="text"], input[type="password"], input[type="email"], input[type="tel"], input[type="file"], textarea, select{
+      width:100%; padding:12px 14px; border-radius:12px; border:1px solid #e2e8f0; background:#fff; color:#0f172a;
+      outline:none; transition:.2s border, .2s box-shadow; font-size:15px;
+    }
+    input:focus, textarea:focus, select:focus{ border-color:var(--blue); box-shadow:0 0 0 3px rgba(14,107,168,.12) }
+    .btn{
+      appearance:none; border:none; background:var(--blue); color:white; padding:12px 18px; border-radius:12px; cursor:pointer;
+      font-weight:600; font-size:15px; display:inline-flex; gap:10px; align-items:center; justify-content:center;
+      box-shadow: 0 8px 18px rgba(14,107,168,.25);
+      transition:.15s transform, .15s box-shadow, .2s background;
+    }
+    .btn:hover{ transform: translateY(-1px); background:var(--blue-600); box-shadow: 0 10px 24px rgba(14,107,168,.32) }
+    .btn:disabled{opacity:.6; cursor:not-allowed; transform:none; box-shadow:none}
+    .btn.secondary{ background:#eef6ff; color:var(--blue); box-shadow:none; border:1px solid #dbeafe }
+    .btn.danger{ background:var(--danger) }
+    .btn.ok{ background:var(--ok) }
+    .toolbar{ display:flex; gap:10px; flex-wrap:wrap }
+    .hint{font-size:13px; color:var(--muted)}
+    .alert{ padding:12px 14px; border-radius:12px; background:#eff6ff; color:#0c4a6e; border:1px solid #dbeafe; font-size:14px }
+    .danger{ background:#fee2e2; color:#991b1b; border:1px solid #fecaca }
+    .ok{ background:#ecfdf5; color:#064e3b; border:1px solid #d1fae5 }
+    .badge{ display:inline-flex; gap:8px; align-items:center; padding:8px 10px; border-radius:999px; background:#eef2ff; color:#3730a3; font-size:13px; border:1px solid #e0e7ff }
+    .row{ display:flex; gap:14px; align-items:center; justify-content:space-between; flex-wrap:wrap }
+    .section-title{ display:flex; gap:8px; align-items:center; font-weight:700; color:#0f172a; margin:6px 0 10px }
+    .section-title svg{ width:20px; height:20px; color:var(--blue) }
+    .table{
+      width:100%; overflow:auto; border:1px solid #e2e8f0; border-radius:12px;
+    }
+    table{ width:100%; border-collapse: collapse; background:white }
+    th, td{ padding:12px 14px; border-bottom:1px solid #eef2f7; text-align:right; font-size:14px }
+    th{ background:#f8fafc; color:#0f172a }
+    tr:last-child td{ border-bottom:none }
+    .footer-note{ text-align:center; margin-top:14px; font-size:12px; color:var(--muted) }
+    .hidden{ display:none !important }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <div class="header">
+      <div class="logo" aria-hidden="true">
+        <!-- app icon -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h10"/>
+        </svg>
+      </div>
+      <h1>بوابة الموظف - دخول وعرض البيانات</h1>
+    </div>
+
+    <!-- Login Card -->
+    <section id="card-login" class="card">
+      <div class="row">
+        <div class="section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm-7 10a7 7 0 0 1 14 0"/></svg>
+          <span>تسجيل الدخول</span>
+        </div>
+        <span class="badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 1v22M1 12h22"/></svg>
+          أدخل رقم الهوية وكلمة المرور
+        </span>
+      </div>
+
+      <div class="grid two" style="margin-top:10px">
+        <div>
+          <label for="id_number">رقم الهوية الوطنية</label>
+          <input id="id_number" type="text" inputmode="numeric" placeholder="1234567890" autocomplete="username" />
+        </div>
+        <div>
+          <label for="password">كلمة المرور</label>
+          <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:14px">
+        <div class="toolbar">
+          <button id="btn-login" class="btn">
+            <!-- login icon -->
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>
+            دخول
+          </button>
+          <button id="btn-demo" class="btn secondary" title="تجربة وهمية">تجربة سريعة</button>
+        </div>
+        <span id="login-msg" class="hint">لن تعمل الصفحة إلا بعد ضبط رابط الـ API في السطر <b>const API_URL</b> أدناه.</span>
+      </div>
+    </section>
+
+    <!-- Profile / Dashboard -->
+    <section id="card-dash" class="card hidden">
+      <div class="row">
+        <div class="section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <span>لوحة البيانات</span>
+        </div>
+        <div class="toolbar">
+          <button id="btn-logout" class="btn secondary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 16l4-4-4-4"/><path d="M7 12h14"/><path d="M3 21V3"/></svg>
+            خروج
+          </button>
+          <span id="hello" class="badge"></span>
+        </div>
+      </div>
+
+      <div id="dash-alert" class="alert ok hidden"></div>
+
+      <div class="grid two" style="margin-top:10px">
+        <div>
+          <label>الاسم</label>
+          <input id="f_name" type="text" readonly />
+        </div>
+        <div>
+          <label>رقم الهوية</label>
+          <input id="f_id" type="text" readonly />
+        </div>
+
+        <div>
+          <label>البريد الإلكتروني</label>
+          <input id="f_email" type="email" readonly />
+        </div>
+        <div>
+          <label>رقم الهاتف</label>
+          <input id="f_phone" type="tel" readonly />
+        </div>
+
+        <div>
+          <label>جهة التكليف</label>
+          <input id="f_dept" type="text" readonly />
+        </div>
+        <div>
+          <label>رصيد الإجازة (يوم)</label>
+          <input id="f_leave" type="text" readonly />
+        </div>
+
+        <div>
+          <label>آخر مؤهل علمي</label>
+          <input id="f_degree" type="text" readonly />
+        </div>
+        <div>
+          <label>العنوان الوطني</label>
+          <input id="f_address" type="text" readonly />
+        </div>
+      </div>
+
+      <!-- CV Upload -->
+      <div style="margin-top:18px">
+        <div class="section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg>
+          <span>السيرة الذاتية (PDF)</span>
+        </div>
+        <div class="row">
+          <div class="toolbar">
+            <input type="file" id="cv_file" accept="application/pdf" />
+            <button id="btn-upload-cv" class="btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5-5 5 5"/><path d="M12 15V3"/></svg>
+              رفع/تحديث السيرة
+            </button>
+          </div>
+          <a id="cv_link" class="hint" href="#" target="_blank" rel="noopener">رابط السيرة الحالية (إن وجد)</a>
+        </div>
+        <div class="hint">يرفع الملف إلى Google Drive ويحدّث العمود المخصص في الشيت تلقائياً.</div>
+      </div>
+
+      <!-- Attendance -->
+      <div style="margin-top:18px">
+        <div class="section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 2v4M16 2v4M3 10h18M5 12h14M5 16h14M5 20h14"/></svg>
+          <span>تسجيل الحضور والانصراف</span>
+        </div>
+        <div class="row">
+          <div class="toolbar">
+            <button id="btn-att-in" class="btn ok">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg>
+              تسجيل دخول (حضور)
+            </button>
+            <button id="btn-att-out" class="btn danger">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14"/></svg>
+              تسجيل خروج (انصراف)
+            </button>
+          </div>
+          <span class="hint">يتم حفظ السجل في ورقة <b>Attendance</b> بالشيت.</span>
+        </div>
+
+        <div class="table" style="margin-top:12px">
+          <table>
+            <thead>
+              <tr>
+                <th>التاريخ</th>
+                <th>الوقت</th>
+                <th>النوع</th>
+                <th>ملاحظة</th>
+              </tr>
+            </thead>
+            <tbody id="att-body">
+              <tr><td colspan="4" style="text-align:center;color:#94a3b8">لا توجد سجلات بعد</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="footer-note">© بوابة الموظف - تصميم أزرق/أبيض بأيقونات SVG – من أجل زهرة 💙</div>
+    </section>
+  </main>
+
+  <script>
+    // ضع هنا رابط الويب آب من Google Apps Script بعد النشر
+    // مثال: const API_URL = "https://script.google.com/macros/s/AKfycbxxxxxxxxxxxx/exec";
+    const API_URL = "YOUR_WEB_APP_URL";
+
+    function show(el){ el.classList.remove('hidden') }
+    function hide(el){ el.classList.add('hidden') }
+
+    const loginCard = document.getElementById('card-login');
+    const dashCard  = document.getElementById('card-dash');
+    const loginMsg  = document.getElementById('login-msg');
+    const hello     = document.getElementById('hello');
+    const dashAlert = document.getElementById('dash-alert');
+
+    // form fields
+    const f_name = document.getElementById('f_name');
+    const f_id   = document.getElementById('f_id');
+    const f_email= document.getElementById('f_email');
+    const f_phone= document.getElementById('f_phone');
+    const f_dept = document.getElementById('f_dept');
+    const f_leave= document.getElementById('f_leave');
+    const f_degree=document.getElementById('f_degree');
+    const f_address=document.getElementById('f_address');
+
+    const cvFile = document.getElementById('cv_file');
+    const cvLink = document.getElementById('cv_link');
+
+    const attBody = document.getElementById('att-body');
+
+    // helpers
+    function storeSession(profile){
+      localStorage.setItem('profile', JSON.stringify(profile));
+    }
+    function getSession(){
+      const raw = localStorage.getItem('profile');
+      return raw ? JSON.parse(raw) : null;
+    }
+    function clearSession(){
+      localStorage.removeItem('profile');
+    }
+    function setAlert(msg, ok=true){
+      dashAlert.textContent = msg;
+      dashAlert.classList.remove('hidden');
+      dashAlert.classList.toggle('ok', ok);
+      dashAlert.classList.toggle('danger', !ok);
+      setTimeout(() => dashAlert.classList.add('hidden'), 3500);
+    }
+    function fmtTime(d){
+      return d.toLocaleTimeString('ar-SA', {hour:'2-digit', minute:'2-digit'});
+    }
+    function fmtDate(d){
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,'0');
+      const dy = String(d.getDate()).padStart(2,'0');
+      return `${y}-${m}-${dy}`;
+    }
+
+    // API calls
+    async function api(action, payload={}){
+      if(!API_URL || API_URL.includes("YOUR_WEB_APP_URL")){
+        throw new Error("رجاءً ضعي رابط الويب آب الصحيح في API_URL قبل الاستخدام.");
+      }
+      const res = await fetch(API_URL, {
+        method:"POST",
+        headers: { "Content-Type":"application/json" },
+        body: JSON.stringify({ action, ...payload })
+      });
+      if(!res.ok){ throw new Error("خطأ في الاتصال: " + res.status); }
+      return await res.json();
+    }
+
+    function fillProfile(p){
+      f_name.value = p.name || "";
+      f_id.value = p.id_number || "";
+      f_email.value = p.email || "";
+      f_phone.value = p.phone || "";
+      f_dept.value = p.department || p.assignment || "";
+      f_leave.value = p.leave_balance != null ? p.leave_balance : "";
+      f_degree.value = p.degree || p.latest_degree || "";
+      f_address.value = p.national_address || p.address || "";
+      hello.textContent = `أهلاً ${p.name || ""} 👋`;
+      if(p.cv_url){
+        cvLink.href = p.cv_url;
+        cvLink.textContent = "فتح السيرة الحالية";
+      }else{
+        cvLink.href = "#";
+        cvLink.textContent = "لا يوجد ملف سيره بعد";
+      }
+      // Attendance list if provided
+      attBody.innerHTML = "";
+      if(Array.isArray(p.attendance) && p.attendance.length){
+        p.attendance.forEach(r => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${r.date || ""}</td><td>${r.time || ""}</td><td>${r.type || ""}</td><td>${r.note || ""}</td>`;
+          attBody.appendChild(tr);
+        });
+      }else{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td colspan="4" style="text-align:center;color:#94a3b8">لا توجد سجلات بعد</td>`;
+        attBody.appendChild(tr);
+      }
+    }
+
+    // login handler
+    document.getElementById('btn-login').addEventListener('click', async () => {
+      const id = document.getElementById('id_number').value.trim();
+      const pw = document.getElementById('password').value.trim();
+      if(!id || !pw){
+        loginMsg.textContent = "أدخلي رقم الهوية وكلمة المرور.";
+        return;
+      }
+      try{
+        const out = await api('login', { id_number:id, password:pw });
+        if(out.ok){
+          storeSession(out.profile);
+          hide(loginCard); show(dashCard);
+          fillProfile(out.profile);
+        }else{
+          loginMsg.textContent = out.message || "بيانات الدخول غير صحيحة.";
+        }
+      }catch(err){
+        loginMsg.textContent = "تعذر الاتصال: " + err.message;
+      }
+    });
+
+    // demo (no API)
+    document.getElementById('btn-demo').addEventListener('click', () => {
+      const demo = {
+        id_number:"1010101010",
+        name:"زهرة",
+        email:"zahra@example.com",
+        phone:"0550000000",
+        department:"جمعية طويق",
+        leave_balance: 12,
+        degree:"بكالوريوس",
+        national_address:"الشرقية - الدمام",
+        cv_url: "#",
+        attendance: [
+          {date:"2025-09-25", time:"08:03", type:"حضور", note:""},
+          {date:"2025-09-25", time:"16:04", type:"انصراف", note:""},
+        ]
+      };
+      storeSession(demo);
+      hide(loginCard); show(dashCard);
+      fillProfile(demo);
+      setAlert("وضع التجربة مفعّل. اربطي الـ API لاستخدام البيانات الحقيقية.", true);
+    });
+
+    // logout
+    document.getElementById('btn-logout').addEventListener('click', () => {
+      clearSession();
+      hide(dashCard); show(loginCard);
+    });
+
+    // Upload CV
+    document.getElementById('btn-upload-cv').addEventListener('click', async () => {
+      const prof = getSession();
+      if(!prof){ return setAlert("الرجاء تسجيل الدخول أولاً.", false); }
+      const file = cvFile.files?.[0];
+      if(!file){ return setAlert("اختاري ملف PDF أولاً.", false); }
+      if(file.type !== "application/pdf"){ return setAlert("الملف يجب أن يكون PDF.", false); }
+
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64 = reader.result.split(",")[1];
+        try{
+          const out = await api("updateCV", {
+            id_number: prof.id_number,
+            file_name: file.name,
+            file_b64: base64
+          });
+          if(out.ok){
+            cvLink.href = out.cv_url;
+            cvLink.textContent = "فتح السيرة الحالية";
+            setAlert("تم رفع/تحديث السيرة بنجاح.", true);
+          }else{
+            setAlert(out.message || "تعذر رفع الملف.", false);
+          }
+        }catch(err){
+          setAlert("خطأ اتصال: " + err.message, false);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Attendance buttons
+    async function sendAttendance(kind){
+      const prof = getSession();
+      if(!prof){ return setAlert("الرجاء تسجيل الدخول أولاً.", false); }
+      try{
+        const out = await api("attendance", {
+          id_number: prof.id_number,
+          kind: kind
+        });
+        if(out.ok){
+          // Prepend row
+          const d = new Date();
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${fmtDate(d)}</td><td>${fmtTime(d)}</td><td>${kind === "in" ? "حضور" : "انصراف"}</td><td></td>`;
+          attBody.prepend(tr);
+          setAlert("تم تسجيل " + (kind === "in" ? "الحضور" : "الانصراف"), true);
+        }else{
+          setAlert(out.message || "تعذر تسجيل الإجراء.", false);
+        }
+      }catch(err){
+        setAlert("خطأ اتصال: " + err.message, false);
+      }
+    }
+
+    document.getElementById('btn-att-in').addEventListener('click', () => sendAttendance("in"));
+    document.getElementById('btn-att-out').addEventListener('click', () => sendAttendance("out"));
+
+    // Restore session if exists
+    (function init(){
+      const prof = getSession();
+      if(prof){
+        hide(loginCard); show(dashCard);
+        fillProfile(prof);
+      }
+    })();
+  </script>
+</body>
+</html>
