@@ -257,7 +257,7 @@
   <script>
     // ضع هنا رابط الويب آب من Google Apps Script بعد النشر
     // مثال: const API_URL = "https://script.google.com/macros/s/AKfycbxxxxxxxxxxxx/exec";
-    const API_URL = "YOUR_WEB_APP_URL";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxInIqAlghBG8WXOrE6j69skz-18DejLigDQB8AZtP-xytrpHF8PjWGWcP8HXFFWmxsvg/exec";
 
     function show(el){ el.classList.remove('hidden') }
     function hide(el){ el.classList.add('hidden') }
@@ -313,7 +313,7 @@
 
     // API calls
     async function api(action, payload={}){
-      if(!API_URL || API_URL.includes("YOUR_WEB_APP_URL")){
+      if(!API_URL || API_URL.includes("https://script.google.com/macros/s/AKfycbxInIqAlghBG8WXOrE6j69skz-18DejLigDQB8AZtP-xytrpHF8PjWGWcP8HXFFWmxsvg/exec")){
         throw new Error("رجاءً ضعي رابط الويب آب الصحيح في API_URL قبل الاستخدام.");
       }
       const res = await fetch(API_URL, {
