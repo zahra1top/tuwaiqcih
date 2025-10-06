@@ -311,11 +311,11 @@
       return `${y}-${m}-${dy}`;
     }
 
-    // API calls
+ // API calls
 async function api(action, payload = {}) {
   const res = await fetch(API_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "text/plain" },  // مهم لتفادي preflight
     body: JSON.stringify({ action, ...payload }),
   });
   if (!res.ok) {
@@ -323,6 +323,7 @@ async function api(action, payload = {}) {
   }
   return await res.json();
 }
+
 
 
     function fillProfile(p){
