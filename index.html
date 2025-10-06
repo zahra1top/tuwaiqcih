@@ -312,18 +312,18 @@
     }
 
     // API calls
-    async function api(action, payload={}){
-      if(!API_URL || API_URL.includes("https://script.google.com/macros/s/AKfycbxInIqAlghBG8WXOrE6j69skz-18DejLigDQB8AZtP-xytrpHF8PjWGWcP8HXFFWmxsvg/exec")){
-        throw new Error("رجاءً ضعي رابط الويب آب الصحيح في API_URL قبل الاستخدام.");
-      }
-      const res = await fetch(API_URL, {
-        method:"POST",
-        headers: { "Content-Type":"application/json" },
-        body: JSON.stringify({ action, ...payload })
-      });
-      if(!res.ok){ throw new Error("خطأ في الاتصال: " + res.status); }
-      return await res.json();
-    }
+async function api(action, payload = {}) {
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action, ...payload }),
+  });
+  if (!res.ok) {
+    throw new Error("خطأ في الاتصال: " + res.status);
+  }
+  return await res.json();
+}
+
 
     function fillProfile(p){
       f_name.value = p.name || "";
